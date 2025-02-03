@@ -1,26 +1,23 @@
 const express = require('express');
-const app = express()
-const middleware = require('./middleware')
+const app = express();
+let { people } = require('./data')
+// Static assets
+app.use(express.static('./methods-public'))
+// Parse form data 
+app.use(express.urlencoded({extended: false}))
 
-app.use('/api',middleware)
-
-app.get('/',(req,res)=>{
-  res.send('Home')
+app.get('/api',(req,res)=>{
+  res.status(200).json({success: true, data: people})
 })
 
-app.get('/about',(req,res)=>{
-  res.send('About')
+app.post('/login',(req,res)=>{
+  const { name } = req.body;
+  if (name) {
+    return res.status(200).send(`Welcome ${name}`)
+  }
+  res.status(401).send('Please provide a name')
 })
-
-app.get('/api/products',(req,res)=>{
-  res.send('Products')
-})
-
-app.get('/api/items',(req,res)=>{
-  res.send('Items')
-})
-
 
 app.listen(5000,()=>{
-  console.log('Listening to port 5000....')
+  console.log('Server is listening on port 5000....')
 })
